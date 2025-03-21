@@ -1,26 +1,84 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import {
+  Injectable,
+  UnauthorizedException,
+  BadRequestException,
+  NotFoundException,
+} from "@nestjs/common";
+
+import { UserService } from "../user/user.service";
+import { JwtService } from "@nestjs/jwt";
+import { randomBytes, scrypt as _scrypt } from "crypto";
+import { promisify } from "util";
+import { CreateUserDto } from "./dtos/create-user.dto";
+const scrypt = promisify(_scrypt);
+import { SignInDto } from "./dtos/signIn.dto";
+import { User } from "../user/user.entity";
 
 @Injectable()
 export class AuthService {
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
+  constructor(
+    private usersService: UserService,
+    private jwtService: JwtService,
+  ) { }
+
+  async register(user: CreateUserDto) {
+    const users = await this.usersService.find(user.email);
+
+    if (users.length) {
+      throw new BadRequestException("Registration Failed!");
+    }
+
+    try {
+      // Hash the user's password
+      const salt = randomBytes(8).toString("hex");
+      const hash = (await scrypt(user.password, salt, 32)) as Buffer;
+      const resultHashPass = salt + "." + hash.toString("hex");
+
+      // Create the new user without the role
+      const userToCreate = await this.usersService.create(
+        user.email,
+        resultHashPass,
+      );
+
+      const payload = {
+        sub: userToCreate.id,
+        email: userToCreate.email,
+      };
+
+      return {
+        access_token: await this.jwtService.signAsync(payload),
+      };
+    } catch (error) {
+      throw new BadRequestException("Email is already in use!");
+    }
   }
 
-  findAll() {
-    return `This action returns all auth`;
-  }
+  async login(userLog: SignInDto) {
+    try {
+      const { email, password } = userLog;
+      const existingUser = await this.usersService.findOne(email);
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
+      if (!existingUser) {
+        throw new NotFoundException("User not found");
+      }
 
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
+      const [salt, storedHash] = existingUser.password.split(".");
+      const enteredHash = (await scrypt(password, salt, 32)) as Buffer;
 
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+      if (storedHash !== enteredHash.toString("hex")) {
+        throw new UnauthorizedException("Invalid password");
+      }
+
+      const payload = {
+        sub: existingUser.id,
+        email: existingUser.email,
+      };
+
+      return {
+        access_token: await this.jwtService.signAsync(payload),
+      };
+    } catch (error) {
+      throw new BadRequestException("Error user login");
+    }
   }
 }
