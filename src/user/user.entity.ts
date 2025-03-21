@@ -8,7 +8,9 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
+  OneToMany,
 } from "typeorm";
+import { Movie } from "../movies/entities/movie.entity";
 
 @Entity({ name: "user", schema: "public" })
 export class User {
@@ -20,6 +22,9 @@ export class User {
 
   @Column()
   password: string;
+
+  @OneToMany(() => Movie, (movie) => movie.user)
+  movies: Movie[];
 
   @AfterInsert()
   logInsert() {

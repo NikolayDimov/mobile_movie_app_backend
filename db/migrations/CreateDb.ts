@@ -46,36 +46,36 @@ export class CreateMovieDbMigration1705909999999 implements MigrationInterface {
         }
 
         // Genre table
-        await queryRunner.createTable(
-            new Table({
-                name: "genre",
-                columns: [
-                    {
-                        name: "id",
-                        type: "uuid",
-                        isPrimary: true,
-                        isGenerated: true,
-                        generationStrategy: "uuid",
-                    },
-                    {
-                        name: "name",
-                        type: "varchar",
-                        length: "100",
-                        isNullable: false,
-                    },
-                    {
-                        name: "created_at",
-                        type: "timestamp",
-                        default: "now()",
-                    },
-                    {
-                        name: "updated_at",
-                        type: "timestamp",
-                        default: "now()",
-                    },
-                ],
-            })
-        );
+        // await queryRunner.createTable(
+        //     new Table({
+        //         name: "genre",
+        //         columns: [
+        //             {
+        //                 name: "id",
+        //                 type: "uuid",
+        //                 isPrimary: true,
+        //                 isGenerated: true,
+        //                 generationStrategy: "uuid",
+        //             },
+        //             {
+        //                 name: "name",
+        //                 type: "varchar",
+        //                 length: "100",
+        //                 isNullable: false,
+        //             },
+        //             {
+        //                 name: "created_at",
+        //                 type: "timestamp",
+        //                 default: "now()",
+        //             },
+        //             {
+        //                 name: "updated_at",
+        //                 type: "timestamp",
+        //                 default: "now()",
+        //             },
+        //         ],
+        //     })
+        // );
 
         // Movie table
         await queryRunner.createTable(
@@ -106,13 +106,13 @@ export class CreateMovieDbMigration1705909999999 implements MigrationInterface {
                         isNullable: true,
                     },
                     {
-                        name: "genre_id",
-                        type: "uuid",
+                        name: "genre",
+                        type: "text",
                         isNullable: false,
                     },
                     {
                         name: "user_id",
-                        type: "uuid", // New column for user_id
+                        type: "uuid",
                         isNullable: false,
                     },
                     {
@@ -144,70 +144,70 @@ export class CreateMovieDbMigration1705909999999 implements MigrationInterface {
         );
 
         // Review table
-        await queryRunner.createTable(
-            new Table({
-                name: "review",
-                columns: [
-                    {
-                        name: "id",
-                        type: "uuid",
-                        isPrimary: true,
-                        isGenerated: true,
-                        generationStrategy: "uuid",
-                    },
-                    {
-                        name: "rating",
-                        type: "integer",
-                        isNullable: false,
-                    },
-                    {
-                        name: "comment",
-                        type: "text",
-                        isNullable: true,
-                    },
-                    {
-                        name: "user_id",
-                        type: "uuid",
-                        isNullable: false,
-                    },
-                    {
-                        name: "movie_id",
-                        type: "uuid",
-                        isNullable: false,
-                    },
-                    {
-                        name: "created_at",
-                        type: "timestamp",
-                        default: "now()",
-                    },
-                    {
-                        name: "updated_at",
-                        type: "timestamp",
-                        default: "now()",
-                    },
-                ],
-                foreignKeys: [
-                    new TableForeignKey({
-                        columnNames: ["user_id"],
-                        referencedColumnNames: ["id"],
-                        referencedTableName: "user",
-                        onDelete: "CASCADE",
-                    }),
-                    new TableForeignKey({
-                        columnNames: ["movie_id"],
-                        referencedColumnNames: ["id"],
-                        referencedTableName: "movie",
-                        onDelete: "CASCADE",
-                    }),
-                ],
-            })
-        );
+        // await queryRunner.createTable(
+        //     new Table({
+        //         name: "review",
+        //         columns: [
+        //             {
+        //                 name: "id",
+        //                 type: "uuid",
+        //                 isPrimary: true,
+        //                 isGenerated: true,
+        //                 generationStrategy: "uuid",
+        //             },
+        //             {
+        //                 name: "rating",
+        //                 type: "integer",
+        //                 isNullable: false,
+        //             },
+        //             {
+        //                 name: "comment",
+        //                 type: "text",
+        //                 isNullable: true,
+        //             },
+        //             {
+        //                 name: "user_id",
+        //                 type: "uuid",
+        //                 isNullable: false,
+        //             },
+        //             {
+        //                 name: "movie_id",
+        //                 type: "uuid",
+        //                 isNullable: false,
+        //             },
+        //             {
+        //                 name: "created_at",
+        //                 type: "timestamp",
+        //                 default: "now()",
+        //             },
+        //             {
+        //                 name: "updated_at",
+        //                 type: "timestamp",
+        //                 default: "now()",
+        //             },
+        //         ],
+        //         foreignKeys: [
+        //             new TableForeignKey({
+        //                 columnNames: ["user_id"],
+        //                 referencedColumnNames: ["id"],
+        //                 referencedTableName: "user",
+        //                 onDelete: "CASCADE",
+        //             }),
+        //             new TableForeignKey({
+        //                 columnNames: ["movie_id"],
+        //                 referencedColumnNames: ["id"],
+        //                 referencedTableName: "movie",
+        //                 onDelete: "CASCADE",
+        //             }),
+        //         ],
+        //     })
+        // );
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.dropTable("review");
+        // await queryRunner.dropTable("review");
         await queryRunner.dropTable("movie");
-        await queryRunner.dropTable("genre");
+        // await queryRunner.dropTable("genre");
         await queryRunner.dropTable("user");
     }
 }

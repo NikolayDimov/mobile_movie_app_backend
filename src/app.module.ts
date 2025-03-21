@@ -46,7 +46,7 @@ dotenv.config();
             User,
             Movie
           ],
-          synchronize: false,
+          synchronize: true,
         };
       },
     }),

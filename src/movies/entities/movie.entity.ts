@@ -1,41 +1,44 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from "typeorm";
-import { ApiProperty } from "@nestjs/swagger";
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { ApiProperty } from '@nestjs/swagger';
+import { User } from '../../user/user.entity';
 
-@Entity()
+@Entity('movie')
 export class Movie {
-    @PrimaryGeneratedColumn("uuid")
+    @PrimaryGeneratedColumn('uuid')
     @ApiProperty()
-    id: string;
+    movie_id: string;
 
     @Column()
     @ApiProperty()
     title: string;
 
-    @Column()
-    @ApiProperty()
-    year: number;
-
-    @Column()
-    @ApiProperty()
-    length: number; // in minutes
-
-    @Column("text")
+    @Column('text')
     @ApiProperty()
     description: string;
 
-    @Column()
+    @Column({ type: 'date' })
     @ApiProperty()
-    image: string; // URL from Amazon bucket
+    release_date: string;
 
     @Column()
     @ApiProperty()
     genre: string;
 
+    @Column({ nullable: true })
+    @ApiProperty()
+    image: string;
+
+    @ManyToOne(() => User, (user) => user.movies)
+    @JoinColumn({ name: 'user_id' })
+    @ApiProperty()
+    user: User;
+
     @CreateDateColumn()
     @ApiProperty()
-    createdAt: Date;
+    created_at: Date;
 
     @UpdateDateColumn()
     @ApiProperty()
-    updatedAt: Date;
+    updated_at: Date;
 }
+
