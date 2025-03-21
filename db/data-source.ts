@@ -1,33 +1,24 @@
 import { DataSource, DataSourceOptions } from "typeorm";
+// require("dotenv").config();
 import * as dotenv from "dotenv";
-
 dotenv.config();
-
-const requiredEnvVariables = [
-    'DB_HOST',
-    'DB_PORT',
-    'DB_USERNAME',
-    'PASSWORD',
-    'DB_NAME'
-];
-
-
-requiredEnvVariables.forEach((envVar) => {
-    if (!process.env[envVar]) {
-        throw new Error(`Missing required environment variable: ${envVar}`);
-    }
-});
 
 export const dataSourceOptions: DataSourceOptions = {
     type: "postgres",
-    host: process.env.DB_HOST as string,
-    port: parseInt(process.env.DB_PORT as string, 10) || 5432,
-    username: process.env.DB_USERNAME as string,
-    password: process.env.PASSWORD as string,
-    database: process.env.DB_NAME as string,
+    // host: "localhost",
+    host: process.env.DB_HOST,
+    // port: 5432,
+    // port: parseInt(process.env.DB_PORT, 10) || 5432,
+    port: 5432,
+
+    // port: parseInt(process.env.DB_PORT || "5432", 10),
+    // username: process.env.USERNAME,
+    username: process.env.DB_USERNAME,
+    password: process.env.PASSWORD,
+    database: process.env.DB_NAME,
     entities: ["dist/**/*.entity.js"],
     migrations: ["dist/db/migrations/*.js"],
-    synchronize: true,
+    synchronize: false,
     logging: true,
     schema: "public",
 };

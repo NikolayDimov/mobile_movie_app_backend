@@ -35,10 +35,12 @@ export class AuthService {
       const resultHashPass = salt + "." + hash.toString("hex");
 
       // Create the new user without the role
+      console.log('Creating user:', user);
       const userToCreate = await this.usersService.create(
         user.email,
         resultHashPass,
       );
+      console.log('User created:', userToCreate);
 
       const payload = {
         sub: userToCreate.id,

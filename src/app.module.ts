@@ -7,6 +7,7 @@ import { APP_FILTER, APP_GUARD, APP_PIPE } from "@nestjs/core";
 import { AuthModule } from "./auth/auth.module";
 import { AuthGuard } from "./auth/guards/auth.guard";
 import { MoviesModule } from "./movies/movies.module";
+import { AwsModule } from './aws/aws.module';
 
 import {
   GlobalExceptionFilter,
@@ -53,6 +54,7 @@ dotenv.config();
     AuthModule,
     UserModule,
     MoviesModule,
+    AwsModule
   ],
   controllers: [],
   providers: [
