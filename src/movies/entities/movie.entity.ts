@@ -28,6 +28,10 @@ export class Movie {
     @ApiProperty()
     image: string;
 
+    @Column()
+    @ApiProperty()
+    length: string;
+
     @ManyToOne(() => User, (user) => user.movies)
     @JoinColumn({ name: 'user_id' })
     @ApiProperty()

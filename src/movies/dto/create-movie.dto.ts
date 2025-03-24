@@ -22,6 +22,10 @@ export class CreateMovieDto {
     image?: string;
 
     @IsNotEmpty()
+    @IsString()
+    length: string;
+
+    @IsNotEmpty()
     @IsUUID()
     user_id: string;
 }
